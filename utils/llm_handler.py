@@ -19,7 +19,8 @@ def call_llm_summarize_sql_result(messages):
 def call_llm_summarize_schema(schema_text):
     prompt = f"""You are a data analyst. The user uploaded datasets with the following structure:{schema_text}
     Please summarize what tables and columns are available, and suggest how the data might relate. Use clear, readable language.
-    Keep only 20 words on one line and give it like a wrapped text.
+    Keep only 20 words on one line and give it like a wrapped text. Represent the schema in tabular format if you need to for better visualization and display each table details individually.
+     Remove the ** in response instead use <b> tag for bold text and  generate table (for schema representation) with in <div class = "data-table"></div>
     """
     return call_llm_groq_chat([{"role": "user", "content": prompt}])
 

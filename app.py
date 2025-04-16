@@ -9,7 +9,7 @@ import secrets
 import shutil
 
 # Third-party imports
-from flask import Flask, request, jsonify, render_template, session
+from flask import Flask, request, jsonify, render_template, session,redirect,url_for
 
 # Local module imports
 from utils.db_runner import run_query, load_table, describe_all_tables
@@ -189,7 +189,7 @@ def chat():
         sql_prompt = (
             "You are a SQL assistant. Given the user's question, and the following table schemas:\n\n"
             f"{session['schema']}\n\n"
-            f"User: {user_text}\nRespond ONLY with a valid SQL query."
+            f"User: {user_text}\nRespond ONLY with a valid SQL query (COMPATIBLE WITH DUCKDB) and Try not to use Functions mostly."
         )
 
         raw_response = call_llm_generate_sql(prompt_history + [{"role": "user", "content": sql_prompt}])
@@ -208,12 +208,15 @@ def chat():
             return jsonify({"reply": f"❗ SQL Execution Error:\n```sql\n{generated_sql}\n```"})
 
         # Result processing
-        result_html = df_result.head(20).to_html(classes="data-table", index=True, border=0).strip()
+        if isinstance(df_result,str):
+            result_html = df_result
+        else:
+            result_html = df_result.head(20).to_html(classes="data-table", index=True, border=0).strip()
         html_template = f"""
             <div class="result-container">
-            <div class="query-result-title">Query Result:</div>
+            <div class="query-result-title"><b>Query Result:</b></div>
             {result_html}</div>
-            <div class="query-result-title">The executed query is:</div>
+            <div class="query-result-title"><b>The executed query is:</b></div>
             <pre class="code-block">{generated_sql}</pre>
             <div class="summary"><b>Summary:</b></div>
             <p>"Replace Summary here with proper HTML tags"</p>
@@ -226,6 +229,7 @@ def chat():
             f"Result (Top 20 rows):\n{result_html}\n\n"
             "Print the result in tabular format neatly first. Show the executed query. "
             "Summarize the output and ask if the user wants to modify this query."
+             
             f"""Use this format efficiently : {html_template}"""
         )
 
@@ -254,7 +258,7 @@ def end_session():
         shutil.rmtree(os.path.join(UPLOAD_FOLDER, session["id"]), ignore_errors=True)
     session.clear()
     reset_store()
-    return ("", 204)
+    return redirect(url_for("index"))
 
 
 if __name__ == "__main__":

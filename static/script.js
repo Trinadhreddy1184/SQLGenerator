@@ -86,12 +86,9 @@ sendBtn.addEventListener("click", async () => {
 function appendMessage({ text, sender, files = [] }) {
   const msgCard = document.createElement("div");
   msgCard.classList.add("msg-card", sender === "user" ? "msg-user" : "msg-ai");
-  msgCard.style.maxWidth = "100%";
-  msgCard.style.overflowWrap = "break-word";
-  msgCard.style.whiteSpace = "pre-wrap";
 
   const content = document.createElement("div");
-  content.innerHTML = formatMessageText(text);
+  content.innerHTML = formatMessageText(text);  // 👈 Smart formatter
   msgCard.appendChild(content);
 
   if (sender === "user") {
@@ -112,18 +109,27 @@ function appendMessage({ text, sender, files = [] }) {
 
 function formatMessageText(text) {
   try {
-    const codeBlockRegex = /```([a-z]*)\n([\s\S]*?)```/g;
+    // If it contains full HTML (e.g., a table), render as-is (no escaping)
+    const htmlPattern = /<table[\s\S]*?>[\s\S]*?<\/table>/gi;
+    const fullHTML = text.match(htmlPattern);
 
+    if (fullHTML) {
+      return text;  // contains a full rendered HTML block like table
+    }
+
+    // Format triple backtick blocks ```sql\n...``` or fallback
+    const codeBlockRegex = /```([a-z]*)\n([\s\S]*?)```/g;
     const formatted = text.replace(codeBlockRegex, (match, lang, code) => {
       return `<pre class="code-block"><code class="language-${lang || 'plaintext'}">${escapeHTML(code.trim())}</code></pre>`;
     });
 
     return formatted.replace(/\n/g, "<br>");
   } catch (e) {
-    console.error("Format error:", e);
+    console.error("Formatting failed:", e);
     return escapeHTML(text).replace(/\n/g, "<br>");
   }
 }
+
 
 function escapeHTML(str) {
   return str.replace(/[&<>"']/g, tag => (

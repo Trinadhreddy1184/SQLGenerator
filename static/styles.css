@@ -226,3 +226,27 @@ pre.code-block {
   line-height: 1.6;
   margin-bottom: 1em;
 }
+
+.msg-card > .data-table {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+.msg-ai {
+  margin-top: 8px;
+  padding-top: 0;
+}
+
+.msg-ai .msg-card {
+  margin-top: 4px;
+  padding-top: 0;
+}
+.msg-card pre, .msg-card table {
+  margin-top: 0;
+  padding-top: 0;
+}
+.msg-card pre,
+.msg-card .result-container {
+  margin-top: 0;
+  padding-top: 0;
+}
