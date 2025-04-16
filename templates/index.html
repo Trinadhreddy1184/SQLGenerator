@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>GPT Chat with Files</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet"/>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}"/>
+</head>
+<body>
+<nav class="navbar navbar-light bg-light border-bottom">
+  <div class="container-fluid">
+    <a class="navbar-brand"><i class="bi bi-chat-dots"></i> Chat Interface</a>
+    <form action="/end_session" method="POST">
+      <button class="btn btn-outline-danger">End Session</button>
+    </form>
+    <span class="badge" id="currentModel">[gpt-4o]</span>
+  </div>
+</nav>
+
+<div class="main-container">
+  <div class="sidebar">
+    <p>Choose Model:</p>
+    <select id="modelSelect" onchange="changeModel(this.value)">
+  <option value="gpt4o">GPT-4o</option>
+  <option value="groq_llama3">Groq: LLaMA3</option>
+  <option value="groq_llama4">Groq: LLaMA4 Maverick</option>
+  <option value="groq_deepseek">Groq: DeepSeek LLaMA 70B</option>
+  <option value="groq_mistral24b">Groq: Mistral Saba 24B</option>
+</select>
+  </div>
+
+  <div class="chat-area">
+    <div id="chatMessages" class="chat-messages"></div>
+    <div id="filePreviewArea" class="file-preview-list"></div>
+    <div class="chat-input-area">
+      <div class="input-group">
+        <input type="file" id="fileInput" multiple hidden accept=".csv,.tsv,.txt,.parquet,.avro,.xlsx,.pdf,.doc,.docx"/>
+
+<button type="button" id="fileBtn" class="btn btn-outline-secondary p-2">
+  <i class="bi bi-paperclip"></i>
+</button>
+
+
+        <input type="text" id="userInput" class="form-control" placeholder="Type message..."/>
+        <button class="btn btn-primary" id="sendBtn">
+          <i class="bi bi-send-fill"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
